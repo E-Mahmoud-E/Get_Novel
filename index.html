@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة الرواية - الصفحة الرئيسية</title>
+    
     <link rel="stylesheet" href="style.css">
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -14,40 +19,38 @@
         <a href="index.html" class="logo">🔮 عالم الرواية</a>
         <div class="nav-links">
             <a href="#chapters-section">الفهرس</a>
-            <a href="#map-section">الخريطة التفاعلية</a>
         </div>
     </nav>
 
     <div class="container">
-        <header style="text-align: center; margin-bottom: 40px;">
+        <header style="text-align: center; margin-bottom: 40px; margin-top: 20px;">
             <h1>مرحباً بك في عالم الفانتازيا</h1>
-            <p style="color: var(--text-muted);">تابع رحلة الأبطال، واكتشف قدراتهم، وشاهد تحركاتهم على الخريطة مباشرة.</p>
+            <p style="color: var(--text-muted); margin-top: 10px;">تابع رحلة الأبطال، واكتشف قدراتهم، وشاهد تحركاتهم عبر الأدوات التفاعلية.</p>
         </header>
 
-        <section id="map-section">
-            <h2>🗺️ خريطة العالم التفاعلية</h2>
-            <div id="map" style="height: 450px; width: 100%;"></div>
-        </section>
+        <div style="text-align: center; margin: 30px 0;">
+            <button id="open-map-btn" style="background-color: var(--accent-color); color: white; padding: 14px 28px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s;">
+                🗺️ فتح خريطة العالم التفاعلية
+            </button>
+        </div>
 
-        <section id="chapters-section" style="margin-top: 50px;">
+        <div id="map-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 15px;">
+            <div style="background-color: var(--surface-color); width: 100%; max-width: 750px; padding: 25px; border-radius: 12px; position: relative; border: 1px solid var(--border-color);">
+                <span id="close-map-btn" style="position: absolute; top: 10px; left: 20px; color: var(--text-muted); font-size: 30px; cursor: pointer; transition: color 0.2s;">&times;</span>
+                <h3 style="margin-bottom: 20px; text-align: center; color: #fff;">📍 خريطة تحركات الشخصيات</h3>
+                
+                <div id="map" style="height: 400px; width: 100%;"></div>
+            </div>
+        </div>
+
+        <section id="chapters-section">
             <h2>📖 فهرس الفصول</h2>
-            <ul class="chapters-list">
-                <li><a href="chapter.html?no=1">الفصل الأول: البداية الجديدة</a></li>
-                <li><a href="chapter.html?no=2">الفصل الثاني: استيقاظ القدرة</a></li>
-                <li><a href="chapter.html?no=3">الفصل الثالث: أولى المواجهات</a></li>
-                </ul>
+            <ul class="chapters-list" id="chapters-loading-zone">
+                <p style="text-align: center; color: var(--text-muted); padding: 20px;">جاري الاتصال بقاعدة البيانات وتحميل الفصول...</p>
+            </ul>
         </section>
     </div>
 
     <script>
-        // تشغيل الخريطة وصورة عالم روايتك
-        // ملاحظة: يمكنك استبدال الرابط أدناه برابط صورة خريطتك الخاصة لاحقاً
-        var map = L.map('map').setView([0, 0], 1);
-        L.imageOverlay('https://www.w3schools.com/w3images/photographer.jpg', [[-100, -100], [100, 100]]).addTo(map);
-
-        // إضافة نقاط تفاعلية لأماكن الشخصيات
-        L.marker([10, 20]).addTo(map).bindPopup("<b>🏰 قلعة التنانين:</b> يتواجد هنا البطل حالياً بقوة 5000 XP");
-        L.marker([-20, -30]).addTo(map).bindPopup("<b>🌲 غابة الخلود:</b> مكان تجمع الوحوش السحرية");
-    </script>
-</body>
-</html>
+        /* ==========================================================================
+        
