@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>جاري تحميل الفصل...</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">الصفحة الرئيسية</a>
+    </nav>
+
+    <main>
+        <h1 id="chapter-title"></h1>
+        <div id="chapter-content"></div>
+    </main>
+
+    <div class="navigation">
+        <button id="prev-btn">الفصل السابق</button>
+        <button id="next-btn">الفصل التالي</button>
+    </div>
+
+    <script>
+        // 1. إعدادات Firebase الخاصة بك (تنسخها منคอนโซล Firebase)
+        const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "..." };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // 2. معرفة رقم الفصل من الرابط الحالي (مثال: chapter.html?no=1)
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentChapter = parseInt(urlParams.get('no')) || 1;
+
+        // 3. جلب بيانات الفصل من Firestore عرضها
+        db.collection("chapters").doc("ch" + currentChapter).get().then((doc) => {
+            if (doc.exists) {
+                document.getElementById("chapter-title").innerText = doc.data().title;
+                document.getElementById("chapter-content").innerText = doc.data().content;
+                document.title = doc.data().title;
+            } else {
+                document.getElementById("chapter-content").innerText = "هذا الفصل غير موجود بعد.";
+            }
+        });
+
+        // 4. تشغيل أزرار التنقل
+        document.getElementById("prev-btn").onclick = () => { if(currentChapter > 1) window.location.search = `?no=${currentChapter - 1}`; };
+        document.getElementById("next-btn").onclick = () => { window.location.search = `?no=${currentChapter + 1}`; };
+    </script>
+</body>
+</html>
+
