@@ -53,4 +53,77 @@
 
     <script>
         /* ==========================================================================
+           1. إعداد وتفعيل Firebase (Firestore)
+           ========================================================================== */
+        // ضع هنا بيانات مشروعك الحقيقية التي تجلبها من إعدادات Firebase Console
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
         
+        // بدء تشغيل الخدمة
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // جلب مكان عرض الفصول في الصفحة
+        const listContainer = document.getElementById('chapters-loading-zone');
+
+        // استدعاء البيانات من كولكشن "chapters" وترتيبها حسب حقل "order" تصاعدياً
+        db.collection("chapters").orderBy("order").get().then((querySnapshot) => {
+            listContainer.innerHTML = ""; // تنظيف مساحة العرض من نصوص التحميل
+            
+            if (querySnapshot.empty) {
+                listContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 20px;">لا توجد فصول مرفوعة حالياً.</p>`;
+                return;
+            }
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const li = document.createElement('li');
+                // نمرر الـ Document ID (مثل ch1, ch2) عبر الرابط لتقرأه صفحة القراءة
+                li.innerHTML = `<a href="chapter.html?id=${doc.id}">${data.title}</a>`;
+                listContainer.appendChild(li);
+            });
+        }).catch(err => {
+            listContainer.innerHTML = `<p style="color:#ef4444; text-align:center; padding:20px;">حدث خطأ أثناء جلب الفصول: ${err.message}</p>`;
+        });
+
+        /* ==========================================================================
+           2. تشغيل وإعداد الخريطة التفاعلية (Leaflet.js)
+           ========================================================================== */
+        var map = L.map('map').setView([0, 0], 1);
+        
+        // استبدل هذا الرابط لاحقاً برابط صورة خريطة عالمك الخاصة المرفوعة على GitHub
+        L.imageOverlay('https://www.w3schools.com/w3images/photographer.jpg', [[-100, -100], [100, 100]]).addTo(map);
+
+        // علامات الأماكن الافتراضية (تستطيع التعديل عليها أو جلبها من Firestore لاحقاً)
+        L.marker([10, 20]).addTo(map).bindPopup("<b>🏰 قلعة التنانين:</b> يتواجد هنا البطل حالياً بقوة 5000 XP");
+        L.marker([-20, -30]).addTo(map).bindPopup("<b>🌲 غابة الخلود:</b> نقطة ظهور الوحوش السحرية");
+
+        /* ==========================================================================
+           3. أزرار التحكم بالنافذة المنبثقة (Modal Toggle)
+           ========================================================================== */
+        const modal = document.getElementById('map-modal');
+        const openBtn = document.getElementById('open-map-btn');
+        const closeBtn = document.getElementById('close-map-btn');
+
+        // فتح النافذة وإعادة ضبط حجم الخريطة لتفادي مشاكل العرض والتداخل
+        openBtn.onclick = () => {
+            modal.style.display = 'flex';
+            setTimeout(() => { map.invalidateSize(); }, 250); 
+        };
+
+        // إغلاق عند الضغط على علامة X
+        closeBtn.onclick = () => { modal.style.display = 'none'; };
+        closeBtn.onmouseenter = () => { closeBtn.style.color = '#fff'; };
+        closeBtn.onmouseleave = () => { closeBtn.style.color = 'var(--text-muted)'; };
+
+        // إغلاق النافذة إذا ضغط المستخدم في أي مكان خارج إطار الخريطة
+        window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; };
+    </script>
+</body>
+</html>
