@@ -1,14 +1,53 @@
-<div id="map" style="height: 400px; width: 100%;"></div>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الرواية - الصفحة الرئيسية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <nav>
+        <a href="index.html" class="logo">🔮 عالم الرواية</a>
+        <div class="nav-links">
+            <a href="#chapters-section">الفهرس</a>
+            <a href="#map-section">الخريطة التفاعلية</a>
+        </div>
+    </nav>
 
-<script>
-    // تشغيل الخريطة وصورة عالم روايتك
-    var map = L.map('map').setView([0, 0], 1);
-    L.imageOverlay('world-map.jpg', [[-100, -100], [100, 100]]).addTo(map);
+    <div class="container">
+        <header style="text-align: center; margin-bottom: 40px;">
+            <h1>مرحباً بك في عالم الفانتازيا</h1>
+            <p style="color: var(--text-muted);">تابع رحلة الأبطال، واكتشف قدراتهم، وشاهد تحركاتهم على الخريطة مباشرة.</p>
+        </header>
 
-    // إضافة نقاط تفاعلية لأماكن الشخصيات
-    L.marker([10, 20]).addTo(map).bindPopup("<b>قلعة التنانين:</b> يتواجد هنا البطل حالياً بقوة 5000 XP");
-</script>
+        <section id="map-section">
+            <h2>🗺️ خريطة العالم التفاعلية</h2>
+            <div id="map" style="height: 450px; width: 100%;"></div>
+        </section>
 
+        <section id="chapters-section" style="margin-top: 50px;">
+            <h2>📖 فهرس الفصول</h2>
+            <ul class="chapters-list">
+                <li><a href="chapter.html?no=1">الفصل الأول: البداية الجديدة</a></li>
+                <li><a href="chapter.html?no=2">الفصل الثاني: استيقاظ القدرة</a></li>
+                <li><a href="chapter.html?no=3">الفصل الثالث: أولى المواجهات</a></li>
+                </ul>
+        </section>
+    </div>
+
+    <script>
+        // تشغيل الخريطة وصورة عالم روايتك
+        // ملاحظة: يمكنك استبدال الرابط أدناه برابط صورة خريطتك الخاصة لاحقاً
+        var map = L.map('map').setView([0, 0], 1);
+        L.imageOverlay('https://www.w3schools.com/w3images/photographer.jpg', [[-100, -100], [100, 100]]).addTo(map);
+
+        // إضافة نقاط تفاعلية لأماكن الشخصيات
+        L.marker([10, 20]).addTo(map).bindPopup("<b>🏰 قلعة التنانين:</b> يتواجد هنا البطل حالياً بقوة 5000 XP");
+        L.marker([-20, -30]).addTo(map).bindPopup("<b>🌲 غابة الخلود:</b> مكان تجمع الوحوش السحرية");
+    </script>
+</body>
+</html>
